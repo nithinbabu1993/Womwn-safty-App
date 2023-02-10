@@ -63,7 +63,7 @@ public class SignUpActivity extends AppCompatActivity {
 
 
     private void userRegistration(String number) {
-        UserModel obj = new UserModel(number, "", "","User");
+        UserModel obj = new UserModel(number, binding.uname.getText().toString(), binding.uphone.getText().toString(),"User");
         db = FirebaseFirestore.getInstance();
         db.collection("User").add(obj).
                 addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
