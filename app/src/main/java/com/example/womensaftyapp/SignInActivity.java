@@ -19,12 +19,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 public class SignInActivity extends AppCompatActivity {
-ActivitySignInBinding binding;
+    ActivitySignInBinding binding;
     FirebaseFirestore db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding=ActivitySignInBinding.inflate(getLayoutInflater());
+        binding = ActivitySignInBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         db = FirebaseFirestore.getInstance();
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -36,11 +37,22 @@ ActivitySignInBinding binding;
         binding.signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),SignUpActivity.class));
+                startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
                 finish();
             }
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sp = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
+        if (sp.getString("utype", "").equals("User")) {
+            startActivity(new Intent(SignInActivity.this, UserHome.class));
+            finish();
+        }
+    }
+
     private void callLoginFun() {
         final ProgressDialog progressDoalog = new ProgressDialog(this);
         progressDoalog.setMessage("Checking....");
@@ -56,7 +68,7 @@ ActivitySignInBinding binding;
                         try {
                             if (queryDocumentSnapshots.getDocuments().isEmpty()) {
                                 progressDoalog.dismiss();
-                                    Toast.makeText(SignInActivity.this, "Login pin not Registered", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignInActivity.this, "Login pin not Registered", Toast.LENGTH_SHORT).show();
                             } else {
                                 SharedPreferences sp = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sp.edit();
@@ -66,7 +78,7 @@ ActivitySignInBinding binding;
                                 editor.commit();
                                 progressDoalog.dismiss();
                                 if (queryDocumentSnapshots.getDocuments().get(0).getString("utype").equals("User")) {
-                                    startActivity(new Intent(SignInActivity.this, SignInActivity.class));
+                                    startActivity(new Intent(SignInActivity.this, UserHome.class));
                                     finish();
                                 }
                             }
