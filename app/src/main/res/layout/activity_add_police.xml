@@ -52,7 +52,7 @@
             android:layout_marginHorizontal="30dp"
             android:focusable="false"
             android:inputType="textPostalAddress"
-            android:hint="Enter Hospital Address"/>
+            android:hint="Enter station Address"/>
         <androidx.appcompat.widget.AppCompatEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
