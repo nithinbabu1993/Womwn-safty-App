@@ -43,7 +43,8 @@ public class AddPolice extends FragmentActivity implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         binding=ActivityAddPoliceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         db = FirebaseFirestore.getInstance();
         binding.btnadd.setOnClickListener(new View.OnClickListener() {
