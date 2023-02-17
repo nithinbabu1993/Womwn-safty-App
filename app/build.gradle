@@ -43,5 +43,12 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage-ktx:20.0.1'
     implementation 'com.google.firebase:firebase-firestore:24.0.0'
     implementation 'com.google.firebase:firebase-database:20.1.0'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.google.android.gms:play-services-location:11.0.4'
+    implementation 'com.google.android.gms:play-services-places:16.0.0'
+    implementation 'com.google.maps:google-maps-services:0.1.20'
+    implementation 'com.github.clans:fab:1.6.4'
+    implementation 'com.karumi:dexter:5.0.0'
 
 }

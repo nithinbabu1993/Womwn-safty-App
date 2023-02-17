@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="example.javatpoint.com.optionmenu.MainActivity">
+
+    <item  android:id="@+id/tv_addpolice"
+        android:title="Add police station"/>
+    <item  android:id="@+id/tv_viewpolice"
+        android:title="Police Stations"/>
+    <item  android:id="@+id/tv_appusers"
+        android:title="App users"/>
+
+</menu>

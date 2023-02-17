@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,6 +17,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WomenSaftyApp"
         tools:targetApi="31">
+        <activity
+            android:name=".AllPoliceStations"
+            android:exported="false" />
+        <activity
+            android:name=".AppUsers"
+            android:exported="false" />
+        <activity
+            android:name=".AddPolice"
+            android:exported="false" />
+        <activity
+            android:name=".AdminHome"
+            android:exported="false" />
         <activity
             android:name=".UserHome"
             android:exported="false" />
@@ -30,6 +48,30 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <service android:name=".settings.LocationMonitoringService" />
+        <service
+            android:name=".settings.MyService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <receiver
+            android:name=".settings.SensorRestarterBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="RestartServiceWhenStopped" />
+        <receiver
+            android:name=".settings.restartShake"
+            android:enabled="true"
+            android:exported="true"
+            android:label="RestartServiceWhenStopped" />
     </application>
 
 </manifest>

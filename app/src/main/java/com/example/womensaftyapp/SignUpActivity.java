@@ -76,6 +76,8 @@ public class SignUpActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(SignUpActivity.this, "Creation failed", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(getApplicationContext(),SignInActivity.class));
+                        finish();
                     }
                 });
     }

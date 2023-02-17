@@ -81,6 +81,10 @@ public class SignInActivity extends AppCompatActivity {
                                     startActivity(new Intent(SignInActivity.this, UserHome.class));
                                     finish();
                                 }
+                                else if (queryDocumentSnapshots.getDocuments().get(0).getString("utype").equals("Admin")) {
+                                    startActivity(new Intent(SignInActivity.this, AdminHome.class));
+                                    finish();
+                                }
                             }
 
                         } catch (Exception e) {
