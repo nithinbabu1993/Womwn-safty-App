@@ -26,6 +26,14 @@ ActivityUserHomeBinding binding;
                 Toast.makeText(UserHome.this, "under process", Toast.LENGTH_SHORT).show();
             }
         });
+        binding.emergency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(UserHome.this, Emergencylist.class));
+                finish();
+            }
+        });
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
