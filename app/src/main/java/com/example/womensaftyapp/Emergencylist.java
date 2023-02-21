@@ -85,4 +85,9 @@ public class Emergencylist extends AppCompatActivity {
                     }
                 });
     }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(getApplicationContext(),UserHome.class));finish();
+    }
 }
