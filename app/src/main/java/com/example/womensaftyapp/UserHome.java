@@ -8,13 +8,24 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+
+import com.example.womensaftyapp.databinding.ActivityUserHomeBinding;
 
 public class UserHome extends AppCompatActivity {
-
+ActivityUserHomeBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_home);
+        binding=ActivityUserHomeBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        binding.sos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(UserHome.this, "under process", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
