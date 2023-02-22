@@ -1,7 +1,15 @@
 package com.example.womensaftyapp.settings;
 
 public class Parentmodel {
-    String name,phone;
+    String uid,name,phone;
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 
     public String getName() {
         return name;
@@ -19,8 +27,9 @@ public class Parentmodel {
         this.phone = phone;
     }
 
-    public Parentmodel(String name, String phone) {
+    public Parentmodel(String uId,String name, String phone) {
         this.name = name;
         this.phone = phone;
+        this.uid = uId;
     }
 }

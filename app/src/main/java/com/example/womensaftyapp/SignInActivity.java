@@ -75,6 +75,7 @@ public class SignInActivity extends AppCompatActivity {
                                 editor.putString("utype", queryDocumentSnapshots.getDocuments().get(0).getString("utype"));
                                 editor.putString("name", queryDocumentSnapshots.getDocuments().get(0).getString("name"));
                                 editor.putString("mobile", queryDocumentSnapshots.getDocuments().get(0).getString("phone"));
+                                editor.putString("uId", queryDocumentSnapshots.getDocuments().get(0).getId());
                                 editor.commit();
                                 progressDoalog.dismiss();
                                 if (queryDocumentSnapshots.getDocuments().get(0).getString("utype").equals("User")) {
