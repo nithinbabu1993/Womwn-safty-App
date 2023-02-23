@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.example.womensaftyapp.databinding.ActivityAddPoliceBinding;
 import com.example.womensaftyapp.databinding.ActivityUserHomeBinding;
 import com.example.womensaftyapp.settings.LocationMonitoringService;
+import com.example.womensaftyapp.settings.Parentmodel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -42,6 +43,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -52,6 +54,7 @@ ActivityUserHomeBinding binding;
     Boolean b = false;
     FirebaseFirestore db;
     ProgressDialog progressDoalog;
+    List<Policemodel> police = new ArrayList();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +103,7 @@ ActivityUserHomeBinding binding;
         binding.sos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getParents();
                 Toast.makeText(UserHome.this, "under process", Toast.LENGTH_SHORT).show();
             }
         });
@@ -178,6 +182,8 @@ ActivityUserHomeBinding binding;
                                                 parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlatitude")), parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlongitude")),
                                                 results);
                                         float km = results[0] / 1000;
+                                        police.clear();
+                                         police.add(new Policemodel("","",queryDocumentSnapshots.getDocuments().get(i).getString("phone"),"","","",""));
                                         LatLng latLng = new LatLng(Double.parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlatitude")), Double.parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlongitude")));
                                         CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(12).build();
                                         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -185,10 +191,10 @@ ActivityUserHomeBinding binding;
 
                                         mMap.addMarker(new MarkerOptions()
                                                 .position(latLng)
-                                                .title("Hospital Name-\t" + queryDocumentSnapshots.getDocuments().get(i).getString("name")
+                                                .title("Station Name-\t" + queryDocumentSnapshots.getDocuments().get(i).getString("name")
                                                         + ":"+queryDocumentSnapshots.getDocuments().get(i).getString("address")
-                                                        + "\t:\tDistance from you-" + km+"\t:\t\tHospital Phone-"+queryDocumentSnapshots.getDocuments().get(i).getString("phone")+
-                                                        "Hospital ID:"+queryDocumentSnapshots.getDocuments().get(i).getId())
+                                                        + "\t:\tDistance from you-" + km+"\t:\t\tStation Phone-"+queryDocumentSnapshots.getDocuments().get(i).getString("phone")+
+                                                        "Station ID:"+queryDocumentSnapshots.getDocuments().get(i).getId())
                                                 .icon(BitmapDescriptorFactory
                                                         .defaultMarker(BitmapDescriptorFactory.HUE_AZURE))).showInfoWindow();
 
@@ -206,6 +212,42 @@ ActivityUserHomeBinding binding;
 
                             } catch (Exception e) {
                             }
+
+                        }
+                        progressDoalog.dismiss();
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+    }
+    private void getParents() {
+
+        //Log.d("@", "showData: Called")
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        SharedPreferences sp = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
+        db.collection("Emergency").whereEqualTo("uid", sp.getString("uId",""))
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if(queryDocumentSnapshots.getDocuments().size()>0) {
+                            int i;
+                            for (i = 0; i < queryDocumentSnapshots.getDocuments().size(); i++) {
+//police.get(i).getPhone();
+//                                Hlist.add(new Parentmodel(
+//                                        queryDocumentSnapshots.getDocuments().get(i).getId(),
+//                                        queryDocumentSnapshots.getDocuments().get(i).getString("name"),
+//                                        queryDocumentSnapshots.getDocuments().get(i).getString("phone")));
+                            }
+
+                        }else{
+                            Toast.makeText(getApplicationContext(), "No parents Available", Toast.LENGTH_SHORT).show();
 
                         }
                         progressDoalog.dismiss();
