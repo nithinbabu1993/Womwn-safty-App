@@ -20,6 +20,9 @@
         android:theme="@style/Theme.WomenSaftyApp"
         tools:targetApi="31">
         <activity
+            android:name=".SendComplaint"
+            android:exported="false" />
+        <activity
             android:name=".Emergencylist"
             android:exported="false" />
         <activity
