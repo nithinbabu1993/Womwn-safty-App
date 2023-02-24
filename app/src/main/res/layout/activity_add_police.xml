@@ -5,6 +5,7 @@
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="#071487"
     android:orientation="vertical"
     android:layout_height="match_parent">
 
@@ -12,7 +13,6 @@
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_height="match_parent"
-        android:background="#fff"
         tools:context=".AddPolice">
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
@@ -21,7 +21,7 @@
             android:textStyle="bold"
             android:fontFamily="@font/din_next_lt_arabic_medium"
             android:textSize="25dp"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:padding="10dp"/>
