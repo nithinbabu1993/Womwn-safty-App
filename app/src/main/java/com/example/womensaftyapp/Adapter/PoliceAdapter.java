@@ -2,8 +2,10 @@ package com.example.womensaftyapp.Adapter;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.womensaftyapp.AllPoliceStations;
 import com.example.womensaftyapp.Emergencylist;
 import com.example.womensaftyapp.Policemodel;
+import com.example.womensaftyapp.SendComplaint;
 import com.example.womensaftyapp.databinding.LayoutAllBinding;
 import com.example.womensaftyapp.settings.Parentmodel;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -52,25 +55,32 @@ public class PoliceAdapter extends RecyclerView.Adapter<PoliceAdapter.MyviewHold
         holder.root.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
-                alertbox.setMessage("Do you really wants to Remove this police station?");
-                alertbox.setTitle("Delete!!");
+                SharedPreferences sp = view.getRootView().getContext().getSharedPreferences("LoginData", Context.MODE_PRIVATE);
+                if (sp.getString("utype", "").equals("User")) {
+                    Intent i = new Intent(view.getRootView().getContext(), SendComplaint.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    view.getRootView().getContext().startActivity(i);
+                }else {
+                    AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
+                    alertbox.setMessage("Do you really wants to Remove this police station?");
+                    alertbox.setTitle("Delete!!");
 
-                alertbox.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        deleteDepartment(dm.getDevId(), view, holder.getAdapterPosition());
+                    alertbox.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            deleteDepartment(dm.getDevId(), view, holder.getAdapterPosition());
 
-                    }
-                });
-                alertbox.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                        }
+                    });
+                    alertbox.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
 
-                alertbox.show();
+                    alertbox.show();
+                }
             }
         });
     }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/hospmap"
+            android:title="@string/menu_home" />
+        <item
+            android:id="@+id/nav_emergency"
+            android:icon="@drawable/emergency"
+            android:title="Add/view Emergency list" />
+        <item
+            android:id="@+id/nav_police"
+            android:icon="@drawable/policeman"
+            android:title="All police stations" />
+        <item
+            android:id="@+id/nav_sos"
+            android:icon="@drawable/sos1"
+            android:title="All SOS Report" />
+        <item
+            android:id="@+id/nav_complaints"
+            android:icon="@drawable/complain"
+            android:title="My Complaints" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/side_menu_logout"
+            android:title="logout" />
+    </group>
+</menu>

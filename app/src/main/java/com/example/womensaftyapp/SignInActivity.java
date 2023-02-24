@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.womensaftyapp.Dashboard.UserDashboard;
 import com.example.womensaftyapp.databinding.ActivitySignInBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -48,7 +49,7 @@ public class SignInActivity extends AppCompatActivity {
         super.onResume();
         SharedPreferences sp = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
         if (sp.getString("utype", "").equals("User")) {
-            startActivity(new Intent(SignInActivity.this, UserHome.class));
+            startActivity(new Intent(SignInActivity.this, UserDashboard.class));
             finish();
         }
     }
@@ -79,10 +80,14 @@ public class SignInActivity extends AppCompatActivity {
                                 editor.commit();
                                 progressDoalog.dismiss();
                                 if (queryDocumentSnapshots.getDocuments().get(0).getString("utype").equals("User")) {
-                                    startActivity(new Intent(SignInActivity.this, UserHome.class));
+                                    startActivity(new Intent(SignInActivity.this, UserDashboard.class));
                                     finish();
                                 }
                                 else if (queryDocumentSnapshots.getDocuments().get(0).getString("utype").equals("Admin")) {
+                                    startActivity(new Intent(SignInActivity.this, AdminHome.class));
+                                    finish();
+                                }
+                                else if (queryDocumentSnapshots.getDocuments().get(0).getString("utype").equals("Police")) {
                                     startActivity(new Intent(SignInActivity.this, AdminHome.class));
                                     finish();
                                 }

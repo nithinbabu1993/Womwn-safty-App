@@ -5,12 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.womensaftyapp.Adapter.PoliceAdapter;
 import com.example.womensaftyapp.Adapter.UserAdapter;
+import com.example.womensaftyapp.Dashboard.UserDashboard;
 import com.example.womensaftyapp.databinding.ActivityAllPoliceStationsBinding;
 import com.example.womensaftyapp.databinding.ActivityAppUsersBinding;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -82,6 +85,13 @@ public class AllPoliceStations extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(getApplicationContext(),AdminHome.class));finish();
+        SharedPreferences sp = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
+        if (sp.getString("utype", "").equals("User")) {
+            startActivity(new Intent(getApplicationContext(), UserDashboard.class));
+            finish();
+        } else {
+            startActivity(new Intent(getApplicationContext(), AdminHome.class));
+            finish();
+        }
     }
 }

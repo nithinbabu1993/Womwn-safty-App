@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.womensaftyapp.Dashboard.UserDashboard;
+
 public class SendComplaint extends AppCompatActivity {
 
     @Override
@@ -16,7 +18,7 @@ public class SendComplaint extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(getApplicationContext(), UserHome.class));
+        startActivity(new Intent(getApplicationContext(), UserDashboard.class));
         finish();
     }
 }

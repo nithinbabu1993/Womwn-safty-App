@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.womensaftyapp.Adapter.ParentAdapter;
+import com.example.womensaftyapp.Dashboard.UserDashboard;
 import com.example.womensaftyapp.databinding.ActivityEmergencylistBinding;
 import com.example.womensaftyapp.settings.Parentmodel;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -146,6 +147,6 @@ public class Emergencylist extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(getApplicationContext(),UserHome.class));finish();
+        startActivity(new Intent(getApplicationContext(), UserDashboard.class));finish();
     }
 }
