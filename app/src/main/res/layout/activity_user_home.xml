@@ -27,8 +27,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/sos"
-        android:layout_width="300dp"
-        android:layout_height="400dp"
+        android:layout_width="100dp"
+        android:layout_height="200dp"
         android:layout_marginHorizontal="30dp"
         android:src="@drawable/sos"
         android:textColor="@color/black"
