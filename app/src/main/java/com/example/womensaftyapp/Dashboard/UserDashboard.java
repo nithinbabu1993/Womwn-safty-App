@@ -11,24 +11,25 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Menu;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.womensaftyapp.AddPolice;
 import com.example.womensaftyapp.AllPoliceStations;
 import com.example.womensaftyapp.Emergencylist;
 import com.example.womensaftyapp.Policemodel;
 import com.example.womensaftyapp.R;
 import com.example.womensaftyapp.SendComplaint;
 import com.example.womensaftyapp.SignInActivity;
-import com.example.womensaftyapp.UserHome;
 import com.example.womensaftyapp.databinding.ActivityUserDashboardBinding;
-import com.example.womensaftyapp.databinding.ActivityUserHomeBinding;
 import com.example.womensaftyapp.settings.LocationMonitoringService;
+import com.example.womensaftyapp.settings.RepoprtModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -40,8 +41,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -50,15 +51,16 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class UserDashboard extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
@@ -90,7 +92,7 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
         TextView nav_user = (TextView) hView.findViewById(R.id.name);
         SharedPreferences sp = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
 
-        nav_user.setText(sp.getString("name",""));
+        nav_user.setText(sp.getString("name", ""));
         navigationView.setNavigationItemSelectedListener(this);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -130,15 +132,15 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
                 }, new IntentFilter(LocationMonitoringService.ACTION_LOCATION_BROADCAST));
 
 
-        ImageView sos=findViewById(R.id.sos);
+        ImageView sos = findViewById(R.id.sos);
         sos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getParents();
-                Toast.makeText(UserDashboard.this, "under process", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UserDashboard.this, "Sending Sms to all police station and your parents list", Toast.LENGTH_SHORT).show();
             }
         });
-        Button emergency=findViewById(R.id.emergency);
+        Button emergency = findViewById(R.id.emergency);
         emergency.setVisibility(View.GONE);
         emergency.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,6 +151,7 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
         });
 
     }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -163,6 +166,11 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
             return;
         }
         mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setRotateGesturesEnabled(false);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setZoomGesturesEnabled(true);
     }
 
     @Override
@@ -178,8 +186,12 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
             startActivity(new Intent(UserDashboard.this, AllPoliceStations.class));
             finish();
         }
+        if (id == R.id.nav_sos) {
+            startActivity(new Intent(UserDashboard.this, SOSReports.class));
+            finish();
+        }
 
-         if (id == R.id.nav_logout) {
+        if (id == R.id.nav_logout) {
             SharedPreferences sp = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
             editor.putString("utype", "");
@@ -196,13 +208,25 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
     }
 
 
-
+    public void sendSMS(String phoneNo, String msg) {
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(phoneNo, null, msg, null, null);
+            Toast.makeText(getApplicationContext(), "Message Sent",
+                    Toast.LENGTH_LONG).show();
+        } catch (Exception ex) {
+            Toast.makeText(getApplicationContext(), ex.getMessage().toString(),
+                    Toast.LENGTH_LONG).show();
+            ex.printStackTrace();
+        }
+    }
 
     @Override
     public void onBackPressed() {
         finish();
         moveTaskToBack(true);
     }
+
     private void showData() {
 
         //Log.d("@", "showData: Called")
@@ -226,7 +250,7 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
                                             results);
                                     float km = results[0] / 1000;
                                     police.clear();
-                                    police.add(new Policemodel("","",queryDocumentSnapshots.getDocuments().get(i).getString("phone"),"","","",""));
+                                    police.add(new Policemodel("", "", queryDocumentSnapshots.getDocuments().get(i).getString("phone"), "", "", "", ""));
                                     LatLng latLng = new LatLng(Double.parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlatitude")), Double.parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlongitude")));
                                     CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(12).build();
                                     mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -235,18 +259,18 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
                                     mMap.addMarker(new MarkerOptions()
                                             .position(latLng)
                                             .title("Station Name-\t" + queryDocumentSnapshots.getDocuments().get(i).getString("name")
-                                                    + ":"+queryDocumentSnapshots.getDocuments().get(i).getString("address")
-                                                    + "\t:\tDistance from you-" + km+"\t:\t\tStation Phone-"+queryDocumentSnapshots.getDocuments().get(i).getString("phone")+
-                                                    "Station ID:"+queryDocumentSnapshots.getDocuments().get(i).getId())
+                                                    + ":" + queryDocumentSnapshots.getDocuments().get(i).getString("address")
+                                                    + "\t:\tDistance from you-" + km + "\t:\t\tStation Phone-" + queryDocumentSnapshots.getDocuments().get(i).getString("phone") +
+                                                    "Station ID:" + queryDocumentSnapshots.getDocuments().get(i).getId())
                                             .icon(BitmapDescriptorFactory
                                                     .defaultMarker(BitmapDescriptorFactory.HUE_AZURE))).showInfoWindow();
 
                                 }
                                 mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                                     public void onInfoWindowClick(Marker marker) {
-                                        SharedPreferences sd=getSharedPreferences("police",Context.MODE_PRIVATE);
-                                        SharedPreferences.Editor ed=sd.edit();
-                                        ed.putString("policestation",marker.getTitle());
+                                        SharedPreferences sd = getSharedPreferences("police", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor ed = sd.edit();
+                                        ed.putString("policestation", marker.getTitle());
                                         ed.commit();
                                         startActivity(new Intent(getApplicationContext(), SendComplaint.class));
                                         finish();
@@ -268,28 +292,39 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
                 });
 
     }
+
     private void getParents() {
 
         //Log.d("@", "showData: Called")
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         SharedPreferences sp = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
-        db.collection("Emergency").whereEqualTo("uid", sp.getString("uId",""))
+        db.collection("Emergency").whereEqualTo("uid", sp.getString("uId", ""))
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if(queryDocumentSnapshots.getDocuments().size()>0) {
+                        if (queryDocumentSnapshots.getDocuments().size() > 0) {
                             int i;
                             for (i = 0; i < queryDocumentSnapshots.getDocuments().size(); i++) {
-//police.get(i).getPhone();
-//                                Hlist.add(new Parentmodel(
-//                                        queryDocumentSnapshots.getDocuments().get(i).getId(),
-//                                        queryDocumentSnapshots.getDocuments().get(i).getString("name"),
-//                                        queryDocumentSnapshots.getDocuments().get(i).getString("phone")));
+                                police.add(new Policemodel("", "", queryDocumentSnapshots.getDocuments().get(i).getString("phone"), "", "", "", ""));
+                            }
+                            String issue = "http://maps.google.com/maps?q=loc:" + latitude + "," + longitude + " (" + "Please Help me. I am in trouble.Track me in google map with this link" + ")";
+//                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(strUri));
+//                            intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                            //startActivity(intent);
+                            if (police.isEmpty()) {
+                                Toast.makeText(getApplicationContext(), "No parents/police available Available", Toast.LENGTH_SHORT).show();
+
+                            } else {
+                                for (i = 0; i < police.size(); i++) {
+                                    sendSMS(police.get(i).getPhone(), issue);
+                                    Log.d("@@", "Sending sms to : "+police.get(i).getPhone());
+                                }
+                                reportIssue(issue);
                             }
 
-                        }else{
+                        } else {
                             Toast.makeText(getApplicationContext(), "No parents Available", Toast.LENGTH_SHORT).show();
 
                         }
@@ -298,10 +333,35 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
+
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
                     }
                 });
 
+    }
+
+    private void reportIssue(String issue) {
+        SharedPreferences sp = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
+        Date c = Calendar.getInstance().getTime();
+        System.out.println("Current time => " + c);
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        String formattedDate = df.format(c);
+        RepoprtModel obj = new RepoprtModel("", sp.getString("uId", ""), issue, formattedDate, sp.getString("name", ""), sp.getString("mobile", ""));
+        db = FirebaseFirestore.getInstance();
+        db.collection("Reportedissues").add(obj).
+                addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Toast.makeText(UserDashboard.this, "Issue Registered successfully", Toast.LENGTH_SHORT).show();
+                        //startActivity(new Intent(getApplicationContext(),AddPolice.class));finish();
+                    }
+                }).
+                addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(UserDashboard.this, "Creation failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

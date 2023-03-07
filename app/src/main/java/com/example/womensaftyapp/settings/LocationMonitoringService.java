@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -149,7 +150,7 @@ public class LocationMonitoringService extends Service implements
         lat1 = lat;
         lon1 = lng;
         Log.d(TAG, "Sending info...");
-        //Toast.makeText(this, lat + lng + "", Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(this, lat + lng + "", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(ACTION_LOCATION_BROADCAST);
         intent.putExtra(EXTRA_LATITUDE, lat);
         intent.putExtra(EXTRA_LONGITUDE, lng);

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="#071487"
+    android:background="@drawable/common"
     android:layout_height="match_parent"
     tools:context=".SignUpActivity">
 
@@ -15,7 +15,7 @@
         android:layout_marginTop="32dp"
         android:gravity="center"
         android:text="Signup"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="20dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -58,8 +58,8 @@
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_marginTop="48dp"
+        android:backgroundTint="#fff"
         android:background="@drawable/bg"
-
         android:text="Register"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -88,7 +88,7 @@
         android:layout_width="135dp"
         android:layout_height="129dp"
         android:layout_marginTop="68dp"
-        android:src="@drawable/splash"
+        android:src="@drawable/safe"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

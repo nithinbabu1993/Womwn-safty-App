@@ -3,31 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:background="@drawable/common"
-    tools:context=".AllPoliceStations">
+    android:layout_height="match_parent"
+    tools:context=".Dashboard.SOSReports">
+
     <TextView
-        android:id="@+id/rissu"
-        android:layout_width="match_parent"
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="All Police Stations"
-        android:textAlignment="center"
-        android:textSize="25dp"
+        android:text="My Reported Issues"
+        android:textSize="15dp"
+        android:layout_marginVertical="20dp"
         android:textColor="@color/black"
-        android:layout_marginVertical="16dp"
-        android:layout_marginHorizontal="16dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="0dp"
+        android:id="@+id/rv_issue"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginVertical="16dp"
-        android:id="@+id/rv_police"
+        android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rissu"
+        app:layout_constraintTop_toBottomOf="@+id/textView5"
         app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -21,6 +21,9 @@
         android:theme="@style/Theme.WomenSaftyApp"
         tools:targetApi="31">
         <activity
+            android:name=".Dashboard.SOSReports"
+            android:exported="false" />
+        <activity
             android:name=".Dashboard.UserDashboard"
             android:exported="false"
             android:label="@string/title_activity_user_dashboard"
@@ -48,12 +51,12 @@
             android:exported="false" />
         <activity
             android:name=".SignInActivity"
-            android:theme="@style/Theme.WomenSaftyApp.NoActionBar"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.WomenSaftyApp.NoActionBar" />
         <activity
             android:name=".SignUpActivity"
-            android:theme="@style/Theme.WomenSaftyApp.NoActionBar"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.WomenSaftyApp.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
