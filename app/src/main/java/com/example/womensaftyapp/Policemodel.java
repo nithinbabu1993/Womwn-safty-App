@@ -1,10 +1,10 @@
 package com.example.womensaftyapp;
 
 public class Policemodel {
-    String devId,name,phone,address,utype,hlatitude,hlongitude;
+    String pin, name, phone, address, utype, hlatitude, hlongitude;
 
-    public Policemodel(String devId, String name, String phone, String address, String utype, String hlatitude, String hlongitude) {
-        this.devId = devId;
+    public Policemodel(String pin, String name, String phone, String address, String utype, String hlatitude, String hlongitude) {
+        this.pin = pin;
         this.name = name;
         this.phone = phone;
         this.address = address;
@@ -13,12 +13,12 @@ public class Policemodel {
         this.hlongitude = hlongitude;
     }
 
-    public String getDevId() {
-        return devId;
+    public String getPin() {
+        return pin;
     }
 
-    public void setDevId(String devId) {
-        this.devId = devId;
+    public void setPin(String pin) {
+        this.pin = pin;
     }
 
     public String getName() {

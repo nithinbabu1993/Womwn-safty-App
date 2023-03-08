@@ -39,7 +39,9 @@ public class SignUpActivity extends AppCompatActivity {
         progressDoalog.setCancelable(false);
         progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDoalog.show();
-        db.collection("User").whereEqualTo("pin", binding.lpin.getText().toString()).get().
+        db.collection("User").
+                whereEqualTo("pin", binding.lpin.getText().toString()).
+                whereEqualTo("phone", binding.uphone.getText().toString()).get().
                 addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -48,7 +50,7 @@ public class SignUpActivity extends AppCompatActivity {
                             progressDoalog.dismiss();
                         } else {
                             progressDoalog.dismiss();
-                            Toast.makeText(SignUpActivity.this, "This pin Already Taken", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignUpActivity.this, "This pin/phone number Already Taken", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }).

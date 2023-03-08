@@ -81,7 +81,10 @@ public class AddPolice extends FragmentActivity implements OnMapReadyCallback {
         progressDoalog.setCancelable(false);
         progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDoalog.show();
-        db.collection("User").whereEqualTo("pin", binding.hpin.getText().toString()).get().
+        db.collection("User").
+                whereEqualTo("pin", binding.hpin.getText().toString()).
+                whereEqualTo("phone", binding.hphone.getText().toString())
+                .get().
                 addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -90,7 +93,7 @@ public class AddPolice extends FragmentActivity implements OnMapReadyCallback {
                             progressDoalog.dismiss();
                         } else {
                             progressDoalog.dismiss();
-                            Toast.makeText(AddPolice.this, "This Login pin Already registered", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddPolice.this, "This Login pin/phone number Already registered", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }).

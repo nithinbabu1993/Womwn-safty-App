@@ -68,7 +68,7 @@ public class PoliceAdapter extends RecyclerView.Adapter<PoliceAdapter.MyviewHold
                     alertbox.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            deleteDepartment(dm.getDevId(), view, holder.getAdapterPosition());
+                            deleteDepartment(dm.getPin(), view, holder.getAdapterPosition());
 
                         }
                     });

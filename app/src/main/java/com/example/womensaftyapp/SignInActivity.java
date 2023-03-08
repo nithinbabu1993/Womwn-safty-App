@@ -90,6 +90,12 @@ public class SignInActivity extends AppCompatActivity {
                 callLoginFun();
             }
         });
+        binding.forgotpin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+startActivity(new Intent(getApplicationContext(),ForgotPinActivity.class));finish();
+            }
+        });
         binding.signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
