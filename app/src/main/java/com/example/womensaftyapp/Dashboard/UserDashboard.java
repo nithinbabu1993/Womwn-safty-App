@@ -310,9 +310,7 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
                                 police.add(new Policemodel("", "", queryDocumentSnapshots.getDocuments().get(i).getString("phone"), "", "", "", ""));
                             }
                             String issue = "http://maps.google.com/maps?q=loc:" + latitude + "," + longitude + " (" + "Please Help me. I am in trouble.Track me in google map with this link" + ")";
-//                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(strUri));
-//                            intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-                            //startActivity(intent);
+//
                             if (police.isEmpty()) {
                                 Toast.makeText(getApplicationContext(), "No parents/police available Available", Toast.LENGTH_SHORT).show();
 

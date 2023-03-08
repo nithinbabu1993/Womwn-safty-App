@@ -77,7 +77,7 @@ ActivitySosreportsBinding binding;
                             binding.rvIssue.setAdapter(adapter);
                             adapter.notifyDataSetChanged();
                         }else{
-                            Toast.makeText(getApplicationContext(), "No stations Available", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "No issues Available", Toast.LENGTH_SHORT).show();
 
                         }
                         progressDoalog.dismiss();

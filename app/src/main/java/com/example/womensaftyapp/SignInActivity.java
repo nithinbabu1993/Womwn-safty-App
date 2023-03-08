@@ -26,6 +26,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.womensaftyapp.Dashboard.UserDashboard;
+import com.example.womensaftyapp.Police.PoliceHome;
 import com.example.womensaftyapp.databinding.ActivitySignInBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,12 +46,12 @@ public class SignInActivity extends AppCompatActivity {
         int result1 = ContextCompat.checkSelfPermission(getApplicationContext(), CALL_PHONE);
         int result2 = ContextCompat.checkSelfPermission(getApplicationContext(), SEND_SMS);
 
-        return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED&& result2== PackageManager.PERMISSION_GRANTED;
+        return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED && result2 == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermission() {
 
-        ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION, CALL_PHONE,SEND_SMS}, PERMISSION_REQUEST_CODE);
+        ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION, CALL_PHONE, SEND_SMS}, PERMISSION_REQUEST_CODE);
 
     }
 
@@ -93,7 +94,8 @@ public class SignInActivity extends AppCompatActivity {
         binding.forgotpin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-startActivity(new Intent(getApplicationContext(),ForgotPinActivity.class));finish();
+                startActivity(new Intent(getApplicationContext(), ForgotPinActivity.class));
+                finish();
             }
         });
         binding.signup.setOnClickListener(new View.OnClickListener() {
@@ -104,6 +106,7 @@ startActivity(new Intent(getApplicationContext(),ForgotPinActivity.class));finis
             }
         });
     }
+
     private void showSettingsDialog() {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
         builder.setTitle("Need Permissions");
@@ -132,13 +135,14 @@ startActivity(new Intent(getApplicationContext(),ForgotPinActivity.class));finis
         intent.setData(uri);
         startActivityForResult(intent, 101);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         if (!checkPermission()) {
             requestPermission();
         } else {
-           // Toast.makeText(this, "Permission already granted.", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Permission already granted.", Toast.LENGTH_SHORT).show();
         }
         SharedPreferences sp = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
         if (sp.getString("utype", "").equals("User")) {
@@ -175,13 +179,11 @@ startActivity(new Intent(getApplicationContext(),ForgotPinActivity.class));finis
                                 if (queryDocumentSnapshots.getDocuments().get(0).getString("utype").equals("User")) {
                                     startActivity(new Intent(SignInActivity.this, UserDashboard.class));
                                     finish();
-                                }
-                                else if (queryDocumentSnapshots.getDocuments().get(0).getString("utype").equals("Admin")) {
+                                } else if (queryDocumentSnapshots.getDocuments().get(0).getString("utype").equals("Admin")) {
                                     startActivity(new Intent(SignInActivity.this, AdminHome.class));
                                     finish();
-                                }
-                                else if (queryDocumentSnapshots.getDocuments().get(0).getString("utype").equals("Police")) {
-                                    startActivity(new Intent(SignInActivity.this, AdminHome.class));
+                                } else if (queryDocumentSnapshots.getDocuments().get(0).getString("utype").equals("Police")) {
+                                    startActivity(new Intent(SignInActivity.this, PoliceHome.class));
                                     finish();
                                 }
                             }

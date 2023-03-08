@@ -1,7 +1,9 @@
 package com.example.womensaftyapp.Adapter;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,30 +50,30 @@ public class IssueAdapter extends RecyclerView.Adapter<IssueAdapter.MyviewHolder
         holder.hname.setText(dm.getUname());
         holder.haddress.setText(dm.getIssue());
         holder.hphone.setText(dm.getRdate());
-//        holder.root.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
-//                alertbox.setMessage("Do you really wants to Remove this Parent?");
-//                alertbox.setTitle("Delete!!");
-//
-//                alertbox.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        deleteDepartment(dm.getUid(), view, holder.getAdapterPosition());
-//
-//                    }
-//                });
-//                alertbox.setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.dismiss();
-//                    }
-//                });
-//
-//                alertbox.show();
-//            }
-//        });
+        holder.root.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
+                alertbox.setMessage("Locate this issue?");
+                alertbox.setTitle("locate!!");
+
+                alertbox.setPositiveButton("Locate", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        locateLocation(dm.getIssue(), view, holder.getAdapterPosition());
+
+                    }
+                });
+                alertbox.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                alertbox.show();
+            }
+        });
     }
 
     @Override
@@ -93,37 +96,12 @@ public class IssueAdapter extends RecyclerView.Adapter<IssueAdapter.MyviewHolder
         }
     }
 
-    private void deleteDepartment(String doc_name, View view, int adapterPosition) {
-        //Log.d("@", "showData: Called")
-
-        final ProgressDialog progressDoalog = new ProgressDialog(view.getRootView().getContext());
-        progressDoalog.setMessage("Loading....");
-        progressDoalog.setTitle("Please wait");
-        progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDoalog.show();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("Emergency").document(doc_name).delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        notifyItemChanged(adapterPosition);
-                        Intent i = new Intent(view.getRootView().getContext(), AppUsers.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        view.getRootView().getContext().startActivity(i);
-                        Toast.makeText(view.getRootView().getContext(), " user removed successfully", Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(view.getRootView().getContext(), "Technical error occured", Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-
-        progressDoalog.dismiss();
-
+    private void locateLocation(String issue, View view, int adapterPosition) {
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(issue));
+        intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        view.getRootView().getContext().startActivity(intent);
     }
-
 }
 
 
