@@ -66,7 +66,8 @@ public class Emergencylist extends AppCompatActivity {
         progressDoalog.setCancelable(false);
         progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDoalog.show();
-        db.collection("Emergency").whereEqualTo("phone", binding.tvphone.getText().toString()).get().
+        db.collection("Emergency").
+                whereEqualTo("phone", binding.tvphone.getText().toString()).get().
                 addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
