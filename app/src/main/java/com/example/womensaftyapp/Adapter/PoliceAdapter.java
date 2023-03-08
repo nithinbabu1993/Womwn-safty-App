@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,9 +58,40 @@ public class PoliceAdapter extends RecyclerView.Adapter<PoliceAdapter.MyviewHold
             public void onClick(View view) {
                 SharedPreferences sp = view.getRootView().getContext().getSharedPreferences("LoginData", Context.MODE_PRIVATE);
                 if (sp.getString("utype", "").equals("User")) {
-                    Intent i = new Intent(view.getRootView().getContext(), SendComplaint.class);
-                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    view.getRootView().getContext().startActivity(i);
+                    AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
+                    alertbox.setMessage("What to do?");
+                    alertbox.setTitle("warning!!");
+
+                    alertbox.setPositiveButton("Locate Station", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            if(dm.getHlatitude()!="" && dm.getHlongitude()!=null) {
+                                String issue = "http://maps.google.com/maps?q=loc:" + dm.getHlatitude() + "," + dm.getHlongitude() + " (" + dm.getName() + ")";
+                                locateLocation(issue, view);
+                            }else{
+                                Toast.makeText(view.getRootView().getContext(), "location not found", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    alertbox.setNegativeButton("Send Complaint", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            SharedPreferences sd = view.getContext().getSharedPreferences("police", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor ed = sd.edit();
+                            ed.putString("sname",dm.getName());
+                            ed.putString("sphone",dm.getPhone());
+                            ed.putString("sid",dm.getPin());
+                            ed.putString("from", "adapter");
+                            ed.commit();
+                            Intent i = new Intent(view.getRootView().getContext(), SendComplaint.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            view.getRootView().getContext().startActivity(i);
+                            dialog.dismiss();
+                        }
+                    });
+
+                    alertbox.show();
+
                 }else {
                     AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
                     alertbox.setMessage("Do you really wants to Remove this police station?");
@@ -89,7 +121,12 @@ public class PoliceAdapter extends RecyclerView.Adapter<PoliceAdapter.MyviewHold
     public int getItemCount() {
         return HospList.size();
     }
-
+    private void locateLocation(String issue, View view) {
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(issue));
+        intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        view.getRootView().getContext().startActivity(intent);
+    }
     public class MyviewHolder extends RecyclerView.ViewHolder {
         TextView hname, haddress, hphone,labeladdress;
         ConstraintLayout root;

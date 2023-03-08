@@ -20,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.womensaftyapp.AddPolice;
 import com.example.womensaftyapp.AllPoliceStations;
 import com.example.womensaftyapp.Emergencylist;
 import com.example.womensaftyapp.Policemodel;
@@ -190,6 +189,10 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
             startActivity(new Intent(UserDashboard.this, SOSReports.class));
             finish();
         }
+        if (id == R.id.nav_complaints) {
+            startActivity(new Intent(UserDashboard.this, MyComplaints.class));
+            finish();
+        }
 
         if (id == R.id.nav_logout) {
             SharedPreferences sp = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
@@ -228,7 +231,6 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
     }
 
     private void showData() {
-
         //Log.d("@", "showData: Called")
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -250,7 +252,7 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
                                             results);
                                     float km = results[0] / 1000;
                                     police.clear();
-                                    police.add(new Policemodel("", "", queryDocumentSnapshots.getDocuments().get(i).getString("phone"), "", "", "", ""));
+                                    police.add(new Policemodel(queryDocumentSnapshots.getDocuments().get(i).getId(), "", queryDocumentSnapshots.getDocuments().get(i).getString("phone"), "", "", "", ""));
                                     LatLng latLng = new LatLng(Double.parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlatitude")), Double.parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlongitude")));
                                     CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(12).build();
                                     mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -258,10 +260,11 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
 
                                     mMap.addMarker(new MarkerOptions()
                                             .position(latLng)
-                                            .title("Station Name-\t" + queryDocumentSnapshots.getDocuments().get(i).getString("name")
+                                            .title("Station Name:\t" + queryDocumentSnapshots.getDocuments().get(i).getString("name")
                                                     + ":" + queryDocumentSnapshots.getDocuments().get(i).getString("address")
-                                                    + "\t:\tDistance from you-" + km + "\t:\t\tStation Phone-" + queryDocumentSnapshots.getDocuments().get(i).getString("phone") +
-                                                    "Station ID:" + queryDocumentSnapshots.getDocuments().get(i).getId())
+                                                    + "\t:\tDistance from you:" + km + "\t:\t\tStation Phone:"
+                                                    + queryDocumentSnapshots.getDocuments().get(i).getString("phone") +
+                                                    ":Station ID:" + queryDocumentSnapshots.getDocuments().get(i).getId())
                                             .icon(BitmapDescriptorFactory
                                                     .defaultMarker(BitmapDescriptorFactory.HUE_AZURE))).showInfoWindow();
 
@@ -271,6 +274,7 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
                                         SharedPreferences sd = getSharedPreferences("police", Context.MODE_PRIVATE);
                                         SharedPreferences.Editor ed = sd.edit();
                                         ed.putString("policestation", marker.getTitle());
+                                        ed.putString("from", "dash");
                                         ed.commit();
                                         startActivity(new Intent(getApplicationContext(), SendComplaint.class));
                                         finish();
@@ -294,7 +298,6 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
     }
 
     private void getParents() {
-
         //Log.d("@", "showData: Called")
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -316,10 +319,13 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
 
                             } else {
                                 for (i = 0; i < police.size(); i++) {
+                                    if(police.get(i).getPin()!=""){
+                                        reportIssue(issue,police.get(i).getPin());
+                                    }
                                     sendSMS(police.get(i).getPhone(), issue);
                                     Log.d("@@", "Sending sms to : "+police.get(i).getPhone());
                                 }
-                                reportIssue(issue);
+
                             }
 
                         } else {
@@ -339,13 +345,13 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
 
     }
 
-    private void reportIssue(String issue) {
+    private void reportIssue(String issue, String pin) {
         SharedPreferences sp = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
         Date c = Calendar.getInstance().getTime();
         System.out.println("Current time => " + c);
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         String formattedDate = df.format(c);
-        RepoprtModel obj = new RepoprtModel("", sp.getString("uId", ""), issue, formattedDate, sp.getString("name", ""), sp.getString("mobile", ""));
+        RepoprtModel obj = new RepoprtModel(pin, sp.getString("uId", ""), issue, formattedDate, sp.getString("name", ""), sp.getString("mobile", ""));
         db = FirebaseFirestore.getInstance();
         db.collection("Reportedissues").add(obj).
                 addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
