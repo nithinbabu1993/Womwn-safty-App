@@ -1,16 +1,7 @@
 package com.example.womensaftyapp.settings;
 
 public class RepoprtModel {
-    String rid,uid,issue,rdate,uname,uphone;
-
-    public RepoprtModel(String rid, String uid, String issue, String rdate, String uname, String uphone) {
-        this.rid = rid;
-        this.uid = uid;
-        this.issue = issue;
-        this.rdate = rdate;
-        this.uname = uname;
-        this.uphone = uphone;
-    }
+    String rid,uid,issue,rdate,uname,uphone,utype,liveLatitude,liveLongitude;
 
     public String getRid() {
         return rid;
@@ -58,5 +49,41 @@ public class RepoprtModel {
 
     public void setUphone(String uphone) {
         this.uphone = uphone;
+    }
+
+    public String getUtype() {
+        return utype;
+    }
+
+    public void setUtype(String utype) {
+        this.utype = utype;
+    }
+
+    public String getLiveLatitude() {
+        return liveLatitude;
+    }
+
+    public void setLiveLatitude(String liveLatitude) {
+        this.liveLatitude = liveLatitude;
+    }
+
+    public String getLiveLongitude() {
+        return liveLongitude;
+    }
+
+    public void setLiveLongitude(String liveLongitude) {
+        this.liveLongitude = liveLongitude;
+    }
+
+    public RepoprtModel(String rid, String uid, String issue, String rdate, String uname, String uphone, String utype, String liveLatitude, String liveLongitude) {
+        this.rid = rid;
+        this.uid = uid;
+        this.issue = issue;
+        this.rdate = rdate;
+        this.uname = uname;
+        this.uphone = uphone;
+        this.utype = utype;
+        this.liveLatitude = liveLatitude;
+        this.liveLongitude = liveLongitude;
     }
 }

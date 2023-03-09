@@ -24,6 +24,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Emergencylist extends AppCompatActivity {
     ActivityEmergencylistBinding binding;
@@ -53,6 +54,8 @@ public class Emergencylist extends AppCompatActivity {
                     binding.tvname.setError("Enter  Name");
                 } else if (binding.tvphone.getText().toString().isEmpty()) {
                     binding.tvphone.setError("Enter  phone number");
+                }else if (binding.tvlogpin.getText().toString().isEmpty()) {
+                    binding.tvlogpin.setError("Enter  Login pin");
                 } else {
                     checkphoneExist();
                 }
@@ -66,9 +69,9 @@ public class Emergencylist extends AppCompatActivity {
         progressDoalog.setCancelable(false);
         progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDoalog.show();
-        db.collection("Emergency").
-                whereEqualTo("phone", binding.tvphone.getText().toString()).get().
-                addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        db.collection("User").
+                whereEqualTo("pin", binding.tvlogpin.getText().toString()).
+                whereEqualTo("phone", binding.tvphone.getText().toString()).get().               addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         if (queryDocumentSnapshots.getDocuments().isEmpty()) {
@@ -76,7 +79,7 @@ public class Emergencylist extends AppCompatActivity {
                             progressDoalog.dismiss();
                         } else {
                             progressDoalog.dismiss();
-                            Toast.makeText(Emergencylist.this, "This phone number Already registered", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Emergencylist.this, "This phone number/login pin Already registered", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }).
@@ -90,10 +93,27 @@ public class Emergencylist extends AppCompatActivity {
     }
     private void RegisterParent() {
         SharedPreferences sp = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
+        Random rand = new Random();
+        String parentId = String.format("%04d", rand.nextInt(100000));
 
-        Parentmodel obj = new Parentmodel(sp.getString("uId",""),binding.tvname.getText().toString(), binding.tvphone.getText().toString());
+        Parentmodel obj = new Parentmodel(sp.getString("uId",""),binding.tvname.getText().toString(), binding.tvphone.getText().toString(),parentId);
         db = FirebaseFirestore.getInstance();
         db.collection("Emergency").add(obj).
+                addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Toast.makeText(Emergencylist.this, "Parent Registered successfully", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(getApplicationContext(),Emergencylist.class));finish();
+                    }
+                }).
+                addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(Emergencylist.this, "Creation failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        UserModel obj1 = new UserModel(binding.tvlogpin.getText().toString(), binding.tvname.getText().toString(), binding.tvphone.getText().toString(),"Parent",parentId);
+        db.collection("User").add(obj1).
                 addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
@@ -122,11 +142,11 @@ public class Emergencylist extends AppCompatActivity {
                         if(queryDocumentSnapshots.getDocuments().size()>0) {
                             int i;
                             for (i = 0; i < queryDocumentSnapshots.getDocuments().size(); i++) {
-
                                 Hlist.add(new Parentmodel(
                                         queryDocumentSnapshots.getDocuments().get(i).getId(),
                                         queryDocumentSnapshots.getDocuments().get(i).getString("name"),
-                                        queryDocumentSnapshots.getDocuments().get(i).getString("phone")));
+                                        queryDocumentSnapshots.getDocuments().get(i).getString("phone"),
+                                        queryDocumentSnapshots.getDocuments().get(i).getString("parentId")));
                             }
                             adapter.HospList = Hlist;
                             binding.rvEmergency.setAdapter(adapter);

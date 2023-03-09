@@ -1,13 +1,14 @@
 package com.example.womensaftyapp;
 
 public class UserModel {
-    String pin,name,phone,utype;
+    String pin, name, phone, utype, parentId;
 
-    public UserModel(String pin, String name, String phone, String utype) {
+    public UserModel(String pin, String name, String phone, String utype, String parentId) {
         this.pin = pin;
         this.name = name;
         this.phone = phone;
         this.utype = utype;
+        this.parentId = parentId;
     }
 
     public String getPin() {
@@ -40,5 +41,13 @@ public class UserModel {
 
     public void setUtype(String utype) {
         this.utype = utype;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 }

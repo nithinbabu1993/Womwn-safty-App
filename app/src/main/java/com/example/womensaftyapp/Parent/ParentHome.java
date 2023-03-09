@@ -1,4 +1,4 @@
-package com.example.womensaftyapp;
+package com.example.womensaftyapp.Parent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,13 +11,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.womensaftyapp.Adapter.IssueAdapter;
-import com.example.womensaftyapp.Dashboard.SOSReports;
-import com.example.womensaftyapp.databinding.ActivityAdminHomeBinding;
+import com.example.womensaftyapp.Police.PoliceHome;
+import com.example.womensaftyapp.Police.RegisteredComplaints;
+import com.example.womensaftyapp.R;
+import com.example.womensaftyapp.SignInActivity;
+import com.example.womensaftyapp.databinding.ActivityParentHomeBinding;
+import com.example.womensaftyapp.databinding.ActivityPoliceHomeBinding;
 import com.example.womensaftyapp.settings.RepoprtModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,79 +30,24 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdminHome extends AppCompatActivity {
-    ActivityAdminHomeBinding binding;
+public class ParentHome extends AppCompatActivity {
+    ActivityParentHomeBinding binding;
     FirebaseFirestore db;
     IssueAdapter adapter = new IssueAdapter();
     List<RepoprtModel> Hlist = new ArrayList();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding=ActivityAdminHomeBinding.inflate(getLayoutInflater());
+        binding = ActivityParentHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        LinearLayoutManager ll=new LinearLayoutManager(this);
-        binding.rvIssues.setLayoutManager(ll);
+        LinearLayoutManager ll = new LinearLayoutManager(this);
+        binding.rvRissues.setLayoutManager(ll);
         showData();
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.admin_menu, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.tv_addpolice:
-                startActivity(new Intent(AdminHome.this, AddPolice.class));
-                finish();
-                return true;
-            case R.id.tv_viewpolice:
-                startActivity(new Intent(AdminHome.this, AllPoliceStations.class));
-                finish();
-                return true;
-
-            case R.id.tv_appusers:
-                startActivity(new Intent(AdminHome.this, AppUsers.class));
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-    @Override
-    public void onBackPressed() {
-        AlertDialog.Builder alertbox=new AlertDialog.Builder(AdminHome.this);
-        alertbox.setMessage("Do you really wants to logout from this app?");
-        alertbox.setTitle("Logout!!");
-
-        alertbox.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                SharedPreferences sp = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sp.edit();
-                editor.putString("utype", "");
-                editor.commit();
-                startActivity(new Intent(AdminHome.this, SignInActivity.class));
-                finish();
-
-            }
-        });
-        alertbox.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        alertbox.show();
-
-    }
     private void showData() {
-        ProgressDialog progressDoalog = new ProgressDialog(AdminHome.this);
+        ProgressDialog progressDoalog = new ProgressDialog(ParentHome.this);
         progressDoalog.setMessage("getting Data....");
         progressDoalog.setTitle("Please wait");
         progressDoalog.setCancelable(false);
@@ -111,11 +59,12 @@ public class AdminHome extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         db.collection("Reportedissues")
+                .whereEqualTo("rid",sp.getString("parentId",""))
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if(queryDocumentSnapshots.getDocuments().size()>0) {
+                        if (queryDocumentSnapshots.getDocuments().size() > 0) {
                             int i;
                             for (i = 0; i < queryDocumentSnapshots.getDocuments().size(); i++) {
                                 Hlist.add(new RepoprtModel(
@@ -130,9 +79,9 @@ public class AdminHome extends AppCompatActivity {
                                         queryDocumentSnapshots.getDocuments().get(i).getString("liveLongitude")));
                             }
                             adapter.HospList = Hlist;
-                            binding.rvIssues.setAdapter(adapter);
+                            binding.rvRissues.setAdapter(adapter);
                             adapter.notifyDataSetChanged();
-                        }else{
+                        } else {
                             Toast.makeText(getApplicationContext(), "No issues Available", Toast.LENGTH_SHORT).show();
 
                         }
@@ -145,6 +94,35 @@ public class AdminHome extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
                     }
                 });
+
+    }
+
+    public void onBackPressed() {
+        AlertDialog.Builder alertbox = new AlertDialog.Builder(ParentHome.this);
+        alertbox.setMessage("Do you really wants to logout from this app?");
+        alertbox.setTitle("Logout!!");
+
+        alertbox.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                SharedPreferences sp = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("utype", "");
+                editor.commit();
+                startActivity(new Intent(ParentHome.this, SignInActivity.class));
+                finish();
+
+            }
+        });
+        alertbox.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        alertbox.show();
 
     }
 }

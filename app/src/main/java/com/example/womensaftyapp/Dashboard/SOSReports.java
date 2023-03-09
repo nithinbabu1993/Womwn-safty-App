@@ -71,7 +71,10 @@ ActivitySosreportsBinding binding;
                                         queryDocumentSnapshots.getDocuments().get(i).getString("issue"),
                                         queryDocumentSnapshots.getDocuments().get(i).getString("rdate"),
                                         queryDocumentSnapshots.getDocuments().get(i).getString("uname"),
-                                        queryDocumentSnapshots.getDocuments().get(i).getString("uphone")));
+                                        queryDocumentSnapshots.getDocuments().get(i).getString("uphone"),
+                                        queryDocumentSnapshots.getDocuments().get(i).getString("utype"),
+                                        queryDocumentSnapshots.getDocuments().get(i).getString("liveLatitude"),
+                                        queryDocumentSnapshots.getDocuments().get(i).getString("liveLongitude")));
                             }
                             adapter.HospList = Hlist;
                             binding.rvIssue.setAdapter(adapter);

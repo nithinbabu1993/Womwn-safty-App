@@ -2,9 +2,11 @@ package com.example.womensaftyapp.Dashboard;
 
 import static java.lang.Double.parseDouble;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 
 import com.example.womensaftyapp.AllPoliceStations;
 import com.example.womensaftyapp.Emergencylist;
+import com.example.womensaftyapp.Police.PoliceHome;
 import com.example.womensaftyapp.Policemodel;
 import com.example.womensaftyapp.R;
 import com.example.womensaftyapp.SendComplaint;
@@ -103,6 +106,8 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
         progressDoalog.setCancelable(true);
         progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDoalog.show();
+        TextView clat = findViewById(R.id.clat);
+        TextView clon = findViewById(R.id.clon);
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 new BroadcastReceiver() {
                     @Override
@@ -111,6 +116,8 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
                         longitude = intent.getStringExtra(LocationMonitoringService.EXTRA_LONGITUDE);
                         //Toast.makeText(ChooseActivity.this, latitude + longitude + "", Toast.LENGTH_SHORT).show();
                         if (latitude != null && longitude != null) {
+                            clat.setText("Current Latitude\t:\t"+latitude);
+                            clon.setText("Current Longitude\t:\t"+longitude);
 //                            LatLng latLng = new LatLng(parseDouble(latitude), parseDouble(longitude));
 //                            CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(12).build();
 //                            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -135,18 +142,28 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
         sos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getParents();
-                Toast.makeText(UserDashboard.this, "Sending Sms to all police station and your parents list", Toast.LENGTH_SHORT).show();
-            }
-        });
-        Button emergency = findViewById(R.id.emergency);
-        emergency.setVisibility(View.GONE);
-        emergency.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(UserDashboard.this, Emergencylist.class));
-                finish();
-            }
+                AlertDialog.Builder alertbox = new AlertDialog.Builder(UserDashboard.this);
+                alertbox.setMessage("Are you really in Trouble ?You need help?");
+                alertbox.setTitle("SOS");
+
+                alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        getParents();
+                        Toast.makeText(UserDashboard.this, "Sending Sms to all police station and your parents list", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+                alertbox.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                alertbox.show();
+
+                     }
         });
 
     }
@@ -252,7 +269,7 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
                                             results);
                                     float km = results[0] / 1000;
                                     police.clear();
-                                    police.add(new Policemodel(queryDocumentSnapshots.getDocuments().get(i).getId(), "", queryDocumentSnapshots.getDocuments().get(i).getString("phone"), "", "", "", ""));
+                                    police.add(new Policemodel(queryDocumentSnapshots.getDocuments().get(i).getId(), "", queryDocumentSnapshots.getDocuments().get(i).getString("phone"), "", "Police", "", ""));
                                     LatLng latLng = new LatLng(Double.parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlatitude")), Double.parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlongitude")));
                                     CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(12).build();
                                     mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -310,7 +327,7 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
                         if (queryDocumentSnapshots.getDocuments().size() > 0) {
                             int i;
                             for (i = 0; i < queryDocumentSnapshots.getDocuments().size(); i++) {
-                                police.add(new Policemodel("", "", queryDocumentSnapshots.getDocuments().get(i).getString("phone"), "", "", "", ""));
+                                police.add(new Policemodel(queryDocumentSnapshots.getDocuments().get(i).getString("parentId"), "", queryDocumentSnapshots.getDocuments().get(i).getString("phone"), "", "Parent", "", ""));
                             }
                             String issue = "http://maps.google.com/maps?q=loc:" + latitude + "," + longitude + " (" + "Please Help me. I am in trouble.Track me in google map with this link" + ")";
 //
@@ -320,7 +337,7 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
                             } else {
                                 for (i = 0; i < police.size(); i++) {
                                     if(police.get(i).getPin()!=""){
-                                        reportIssue(issue,police.get(i).getPin());
+                                        reportIssue(issue,police.get(i).getPin(),police.get(i).getUtype());
                                     }
                                     sendSMS(police.get(i).getPhone(), issue);
                                     Log.d("@@", "Sending sms to : "+police.get(i).getPhone());
@@ -345,13 +362,13 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
 
     }
 
-    private void reportIssue(String issue, String pin) {
+    private void reportIssue(String issue, String pin, String utype) {
         SharedPreferences sp = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
         Date c = Calendar.getInstance().getTime();
         System.out.println("Current time => " + c);
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         String formattedDate = df.format(c);
-        RepoprtModel obj = new RepoprtModel(pin, sp.getString("uId", ""), issue, formattedDate, sp.getString("name", ""), sp.getString("mobile", ""));
+        RepoprtModel obj = new RepoprtModel(pin, sp.getString("uId", ""), issue, formattedDate, sp.getString("name", ""), sp.getString("mobile", ""),utype,"","");
         db = FirebaseFirestore.getInstance();
         db.collection("Reportedissues").add(obj).
                 addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

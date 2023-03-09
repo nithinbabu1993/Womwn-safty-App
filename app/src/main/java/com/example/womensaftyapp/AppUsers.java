@@ -61,7 +61,7 @@ public class AppUsers extends AppCompatActivity {
                                 Hlist.add(new UserModel(
                                         queryDocumentSnapshots.getDocuments().get(i).getId(),
                                         queryDocumentSnapshots.getDocuments().get(i).getString("name"),
-                                        queryDocumentSnapshots.getDocuments().get(i).getString("phone"),""));
+                                        queryDocumentSnapshots.getDocuments().get(i).getString("phone"),"",""));
                             }
                             adapter.HospList = Hlist;
                             binding.rvUsers.setAdapter(adapter);

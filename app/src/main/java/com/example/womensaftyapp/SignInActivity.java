@@ -26,6 +26,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.womensaftyapp.Dashboard.UserDashboard;
+import com.example.womensaftyapp.Parent.ParentHome;
 import com.example.womensaftyapp.Police.PoliceHome;
 import com.example.womensaftyapp.databinding.ActivitySignInBinding;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -174,6 +175,7 @@ public class SignInActivity extends AppCompatActivity {
                                 editor.putString("name", queryDocumentSnapshots.getDocuments().get(0).getString("name"));
                                 editor.putString("mobile", queryDocumentSnapshots.getDocuments().get(0).getString("phone"));
                                 editor.putString("uId", queryDocumentSnapshots.getDocuments().get(0).getId());
+                                editor.putString("parentId", queryDocumentSnapshots.getDocuments().get(0).getString("parentId"));
                                 editor.commit();
                                 progressDoalog.dismiss();
                                 if (queryDocumentSnapshots.getDocuments().get(0).getString("utype").equals("User")) {
@@ -185,6 +187,11 @@ public class SignInActivity extends AppCompatActivity {
                                 } else if (queryDocumentSnapshots.getDocuments().get(0).getString("utype").equals("Police")) {
                                     startActivity(new Intent(SignInActivity.this, PoliceHome.class));
                                     finish();
+                                }else if (queryDocumentSnapshots.getDocuments().get(0).getString("utype").equals("Parent")) {
+                                    startActivity(new Intent(SignInActivity.this, ParentHome.class));
+                                    finish();
+                                }else{
+                                    Toast.makeText(SignInActivity.this, "invalid User", Toast.LENGTH_SHORT).show();
                                 }
                             }
 

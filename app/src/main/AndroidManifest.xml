@@ -21,6 +21,10 @@
         android:theme="@style/Theme.WomenSaftyApp"
         tools:targetApi="31">
         <activity
+            android:name=".Parent.ParentHome"
+            android:label="Parent DashBoard"
+            android:exported="false" />
+        <activity
             android:name=".Dashboard.MyComplaints"
             android:exported="false" />
         <activity
@@ -28,6 +32,7 @@
             android:exported="false" />
         <activity
             android:name=".Police.PoliceHome"
+            android:label="Police DashBoard"
             android:exported="false" />
         <activity
             android:name=".ForgotPinActivity"
@@ -57,6 +62,7 @@
             android:exported="false" />
         <activity
             android:name=".AdminHome"
+            android:label="Admin DashBoard"
             android:exported="false" />
         <activity
             android:name=".UserHome"

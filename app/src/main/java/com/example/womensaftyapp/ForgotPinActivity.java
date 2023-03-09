@@ -41,6 +41,7 @@ public class ForgotPinActivity extends AppCompatActivity {
                switch(checkedId){
                    case R.id.rbpolice: type=binding.rbpolice.getText().toString();break;
                    case R.id.rbuser:type=binding.rbuser.getText().toString();break;
+                   case R.id.rbparent:type=binding.rbparent.getText().toString();break;
                    default:
                }
            }

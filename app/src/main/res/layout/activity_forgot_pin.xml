@@ -25,6 +25,7 @@
     android:id="@+id/rgb"
     android:layout_marginHorizontal="30dp"
     android:gravity="center"
+    android:layout_marginTop="10dp"
     android:background="@drawable/bg"
     android:orientation="horizontal"
     app:layout_constraintTop_toBottomOf="@id/textView11"
@@ -41,6 +42,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/rbuser"
         android:text="User"
+        android:layout_marginStart="30dp"
+        />
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rbparent"
+        android:text="Parent"
         android:layout_marginStart="30dp"
         />
 </RadioGroup>

@@ -1,8 +1,10 @@
 package com.example.womensaftyapp.Adapter;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +52,12 @@ public class IssueAdapter extends RecyclerView.Adapter<IssueAdapter.MyviewHolder
         holder.hname.setText(dm.getUname());
         holder.haddress.setText(dm.getIssue());
         holder.hphone.setText(dm.getRdate());
+        SharedPreferences sp = holder.itemView.getContext().getSharedPreferences("LoginData", Context.MODE_PRIVATE);
+        if (sp.getString("utype", "").equals("User")) {
+          holder.to.setVisibility(View.VISIBLE);
+          holder.lbl.setVisibility(View.VISIBLE);
+            holder.to.setText(dm.getUtype());
+        }
         holder.root.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -57,16 +65,17 @@ public class IssueAdapter extends RecyclerView.Adapter<IssueAdapter.MyviewHolder
                 alertbox.setMessage("Locate this issue?");
                 alertbox.setTitle("locate!!");
 
-                alertbox.setPositiveButton("Locate", new DialogInterface.OnClickListener() {
+                alertbox.setPositiveButton("Locate Spot", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         locateLocation(dm.getIssue(), view, holder.getAdapterPosition());
 
                     }
                 });
-                alertbox.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                alertbox.setNegativeButton("Live Tracking", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
                         dialog.dismiss();
                     }
                 });
@@ -82,13 +91,15 @@ public class IssueAdapter extends RecyclerView.Adapter<IssueAdapter.MyviewHolder
     }
 
     public class MyviewHolder extends RecyclerView.ViewHolder {
-        TextView hname, haddress, hphone,labeladdress;
+        TextView hname, haddress, hphone,labeladdress,to,lbl;
         ConstraintLayout root;
         ImageView ddelete;
 
         public MyviewHolder(@NonNull LayoutIssueBinding binding) {
             super(binding.getRoot());
             hname = binding.tvPatientName;
+            lbl = binding.labelTo;
+            to = binding.tvutype;
             root = binding.root;
             haddress = binding.tvPatientAddress;
             hphone = binding.tvPatientPhone;

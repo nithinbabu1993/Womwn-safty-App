@@ -103,6 +103,19 @@
         app:layout_constraintTop_toBottomOf="@+id/labelPhone" />
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/labelTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:visibility="gone"
+        android:fontFamily="@font/din_medium"
+        android:text="Reported to         : "
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/labelAddress"
+        app:layout_constraintTop_toTopOf="@+id/tvutype" />
+
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvPatientAddress"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -110,13 +123,30 @@
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/din_medium"
-        android:text="address of a person\nPost name pin code "
+        android:text="Post name pin code "
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/labelAddress"
         app:layout_constraintTop_toTopOf="@id/labelAddress" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvutype"
+        android:layout_width="0dp"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="4dp"
+        android:fontFamily="@font/din_medium"
+        android:text="name pin code "
+        android:textColor="@color/black"
+
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/labelTo"
+        app:layout_constraintTop_toBottomOf="@+id/tvPatientAddress" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
