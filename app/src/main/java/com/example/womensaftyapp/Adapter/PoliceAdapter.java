@@ -61,14 +61,23 @@ public class PoliceAdapter extends RecyclerView.Adapter<PoliceAdapter.MyviewHold
                     AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
                     alertbox.setMessage("What to do?");
                     alertbox.setTitle("warning!!");
+                    alertbox.setNeutralButton("Call police", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(Intent.ACTION_DIAL);
+                            intent.setData(Uri.parse("tel:" + dm.getPhone()));
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            view.getRootView().getContext().startActivity(intent);
 
+                        }
+                    });
                     alertbox.setPositiveButton("Locate Station", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            if(dm.getHlatitude()!="" && dm.getHlongitude()!=null) {
+                            if (dm.getHlatitude() != "" && dm.getHlongitude() != null) {
                                 String issue = "http://maps.google.com/maps?q=loc:" + dm.getHlatitude() + "," + dm.getHlongitude() + " (" + dm.getName() + ")";
                                 locateLocation(issue, view);
-                            }else{
+                            } else {
                                 Toast.makeText(view.getRootView().getContext(), "location not found", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -78,9 +87,9 @@ public class PoliceAdapter extends RecyclerView.Adapter<PoliceAdapter.MyviewHold
                         public void onClick(DialogInterface dialog, int which) {
                             SharedPreferences sd = view.getContext().getSharedPreferences("police", Context.MODE_PRIVATE);
                             SharedPreferences.Editor ed = sd.edit();
-                            ed.putString("sname",dm.getName());
-                            ed.putString("sphone",dm.getPhone());
-                            ed.putString("sid",dm.getPin());
+                            ed.putString("sname", dm.getName());
+                            ed.putString("sphone", dm.getPhone());
+                            ed.putString("sid", dm.getPin());
                             ed.putString("from", "adapter");
                             ed.commit();
                             Intent i = new Intent(view.getRootView().getContext(), SendComplaint.class);
@@ -92,7 +101,7 @@ public class PoliceAdapter extends RecyclerView.Adapter<PoliceAdapter.MyviewHold
 
                     alertbox.show();
 
-                }else {
+                } else {
                     AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
                     alertbox.setMessage("Do you really wants to Remove this police station?");
                     alertbox.setTitle("Delete!!");
@@ -121,14 +130,16 @@ public class PoliceAdapter extends RecyclerView.Adapter<PoliceAdapter.MyviewHold
     public int getItemCount() {
         return HospList.size();
     }
+
     private void locateLocation(String issue, View view) {
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(issue));
         intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         view.getRootView().getContext().startActivity(intent);
     }
+
     public class MyviewHolder extends RecyclerView.ViewHolder {
-        TextView hname, haddress, hphone,labeladdress;
+        TextView hname, haddress, hphone, labeladdress;
         ConstraintLayout root;
         ImageView ddelete;
 

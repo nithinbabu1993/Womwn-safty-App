@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +60,16 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.MyviewHold
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         deleteDepartment(dm.getUid(), view, holder.getAdapterPosition());
+
+                    }
+                });
+                alertbox.setNeutralButton("Call Parent", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Intent.ACTION_DIAL);
+                        intent.setData(Uri.parse("tel:" + dm.getPhone()));
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        view.getRootView().getContext().startActivity(intent);
 
                     }
                 });
