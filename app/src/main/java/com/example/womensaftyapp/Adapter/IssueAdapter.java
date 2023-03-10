@@ -18,7 +18,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.womensaftyapp.AdminHome;
 import com.example.womensaftyapp.AppUsers;
+import com.example.womensaftyapp.Dashboard.SOSReports;
+import com.example.womensaftyapp.Emergencylist;
+import com.example.womensaftyapp.Parent.ParentHome;
+import com.example.womensaftyapp.Police.PoliceHome;
 import com.example.womensaftyapp.UserModel;
 import com.example.womensaftyapp.databinding.LayoutAllBinding;
 import com.example.womensaftyapp.databinding.LayoutIssueBinding;
@@ -79,6 +84,13 @@ public class IssueAdapter extends RecyclerView.Adapter<IssueAdapter.MyviewHolder
                         dialog.dismiss();
                     }
                 });
+                alertbox.setNeutralButton("Delete Issue", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteDepartment(dm.getRid(),view, holder.getAdapterPosition());
+                        dialog.dismiss();
+                    }
+                });
 
                 alertbox.show();
             }
@@ -113,6 +125,57 @@ public class IssueAdapter extends RecyclerView.Adapter<IssueAdapter.MyviewHolder
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
         view.getRootView().getContext().startActivity(intent);
     }
+    private void deleteDepartment(String doc_name, View view, int adapterPosition) {
+        //Log.d("@", "showData: Called")
+
+        final ProgressDialog progressDoalog = new ProgressDialog(view.getRootView().getContext());
+        progressDoalog.setMessage("Loading....");
+        progressDoalog.setTitle("Please wait");
+        progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDoalog.show();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("Reportedissues").document(doc_name).delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        notifyItemChanged(adapterPosition);
+                        SharedPreferences sp = view.getRootView().getContext().getSharedPreferences("LoginData", Context.MODE_PRIVATE);
+                        Toast.makeText(view.getRootView().getContext(), " issue removed successfully", Toast.LENGTH_SHORT).show();
+
+                        if (sp.getString("utype", "").equals("User")) {
+                            Intent i = new Intent(view.getRootView().getContext(), SOSReports.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            view.getRootView().getContext().startActivity(i);
+
+                        }else if(sp.getString("utype", "").equals("Police")) {
+                            Intent i = new Intent(view.getRootView().getContext(), PoliceHome.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            view.getRootView().getContext().startActivity(i);
+                        }
+                        else if(sp.getString("utype", "").equals("Admin")) {
+                            Intent i = new Intent(view.getRootView().getContext(), AdminHome.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            view.getRootView().getContext().startActivity(i);
+                        }
+                        else if(sp.getString("utype", "").equals("Parent")) {
+                            Intent i = new Intent(view.getRootView().getContext(), ParentHome.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            view.getRootView().getContext().startActivity(i);
+                        }
+                    }
+
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(view.getRootView().getContext(), "Technical error occured", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+        progressDoalog.dismiss();
+
+    }
+
 }
 
 

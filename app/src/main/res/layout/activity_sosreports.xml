@@ -14,7 +14,7 @@
         android:text="My Reported Issues"
         android:textSize="15dp"
         android:layout_marginVertical="20dp"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

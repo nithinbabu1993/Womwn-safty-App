@@ -257,7 +257,7 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-
+                        police.clear();
                         int i;
                         for (i = 0; i < queryDocumentSnapshots.getDocuments().size(); i++) {
 
@@ -268,24 +268,27 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
                                             parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlatitude")), parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlongitude")),
                                             results);
                                     float km = results[0] / 1000;
-                                    police.clear();
-                                    police.add(new Policemodel(queryDocumentSnapshots.getDocuments().get(i).getId(), "", queryDocumentSnapshots.getDocuments().get(i).getString("phone"), "", "Police", "", ""));
-                                    LatLng latLng = new LatLng(Double.parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlatitude")), Double.parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlongitude")));
-                                    CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(12).build();
-                                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                                    //  mMap.clear();
+                                    Log.d("@@", "distance "+km);
+                                    if (km < 10) {
+                                        police.add(new Policemodel(queryDocumentSnapshots.getDocuments().get(i).getId(), "", queryDocumentSnapshots.getDocuments().get(i).getString("phone"), "", "Police", "", ""));
+                                        LatLng latLng = new LatLng(parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlatitude")), parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlongitude")));
+                                        CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(12).build();
+                                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                                        //  mMap.clear();
 
-                                    mMap.addMarker(new MarkerOptions()
-                                            .position(latLng)
-                                            .title("Station Name:\t" + queryDocumentSnapshots.getDocuments().get(i).getString("name")
-                                                    + ":" + queryDocumentSnapshots.getDocuments().get(i).getString("address")
-                                                    + "\t:\tDistance from you:" + km + "\t:\t\tStation Phone:"
-                                                    + queryDocumentSnapshots.getDocuments().get(i).getString("phone") +
-                                                    ":Station ID:" + queryDocumentSnapshots.getDocuments().get(i).getId())
-                                            .icon(BitmapDescriptorFactory
-                                                    .defaultMarker(BitmapDescriptorFactory.HUE_AZURE))).showInfoWindow();
+                                        mMap.addMarker(new MarkerOptions()
+                                                .position(latLng)
+                                                .title("Station Name:\t" + queryDocumentSnapshots.getDocuments().get(i).getString("name")
+                                                        + ":" + queryDocumentSnapshots.getDocuments().get(i).getString("address")
+                                                        + "\t:\tDistance from you:" + km + "\t:\t\tStation Phone:"
+                                                        + queryDocumentSnapshots.getDocuments().get(i).getString("phone") +
+                                                        ":Station ID:" + queryDocumentSnapshots.getDocuments().get(i).getId())
+                                                .icon(BitmapDescriptorFactory
+                                                        .defaultMarker(BitmapDescriptorFactory.HUE_AZURE))).showInfoWindow();
 
+                                    }
                                 }
+
                                 mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                                     public void onInfoWindowClick(Marker marker) {
                                         SharedPreferences sd = getSharedPreferences("police", Context.MODE_PRIVATE);
