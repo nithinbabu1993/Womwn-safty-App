@@ -116,8 +116,8 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
                         longitude = intent.getStringExtra(LocationMonitoringService.EXTRA_LONGITUDE);
                         //Toast.makeText(ChooseActivity.this, latitude + longitude + "", Toast.LENGTH_SHORT).show();
                         if (latitude != null && longitude != null) {
-                            clat.setText("Current Latitude\t:\t"+latitude);
-                            clon.setText("Current Longitude\t:\t"+longitude);
+                            clat.setText("if any police station within 10 km around you ,that only show in this map.\nCurrent Latitude\t:\t" + latitude);
+                            clon.setText("Current Longitude\t:\t" + longitude);
 //                            LatLng latLng = new LatLng(parseDouble(latitude), parseDouble(longitude));
 //                            CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(12).build();
 //                            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -149,6 +149,12 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
                 alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        SharedPreferences jorney = v.getRootView().getContext().getSharedPreferences("help", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor ed = jorney.edit();
+                        ed.putString("status", "1");
+                        ed.commit();
+                        Toast.makeText(v.getContext(), "Your location sharing started", Toast.LENGTH_SHORT).show();
+
                         getParents();
                         Toast.makeText(UserDashboard.this, "Sending Sms to all police station and your parents list", Toast.LENGTH_SHORT).show();
 
@@ -163,7 +169,7 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
 
                 alertbox.show();
 
-                     }
+            }
         });
 
     }
@@ -268,7 +274,7 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
                                             parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlatitude")), parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlongitude")),
                                             results);
                                     float km = results[0] / 1000;
-                                    Log.d("@@", "distance "+km);
+                                    Log.d("@@", "distance " + km);
                                     if (km < 10) {
                                         police.add(new Policemodel(queryDocumentSnapshots.getDocuments().get(i).getId(), "", queryDocumentSnapshots.getDocuments().get(i).getString("phone"), "", "Police", "", ""));
                                         LatLng latLng = new LatLng(parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlatitude")), parseDouble(queryDocumentSnapshots.getDocuments().get(i).getString("hlongitude")));
@@ -339,11 +345,11 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
 
                             } else {
                                 for (i = 0; i < police.size(); i++) {
-                                    if(police.get(i).getPin()!=""){
-                                        reportIssue(issue,police.get(i).getPin(),police.get(i).getUtype());
+                                    if (police.get(i).getPin() != "") {
+                                        reportIssue(issue, police.get(i).getPin(), police.get(i).getUtype());
                                     }
                                     sendSMS(police.get(i).getPhone(), issue);
-                                    Log.d("@@", "Sending sms to : "+police.get(i).getPhone());
+                                    Log.d("@@", "Sending sms to : " + police.get(i).getPhone());
                                 }
 
                             }
@@ -371,7 +377,7 @@ public class UserDashboard extends AppCompatActivity implements OnMapReadyCallba
         System.out.println("Current time => " + c);
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         String formattedDate = df.format(c);
-        RepoprtModel obj = new RepoprtModel(pin, sp.getString("uId", ""), issue, formattedDate, sp.getString("name", ""), sp.getString("mobile", ""),utype,"","");
+        RepoprtModel obj = new RepoprtModel(pin, sp.getString("uId", ""), issue, formattedDate, sp.getString("name", ""), sp.getString("mobile", ""), utype, latitude, longitude);
         db = FirebaseFirestore.getInstance();
         db.collection("Reportedissues").add(obj).
                 addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

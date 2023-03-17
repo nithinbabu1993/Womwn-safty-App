@@ -4,8 +4,11 @@ import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -14,17 +17,23 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.example.womensaftyapp.Dashboard.SOSReports;
 import com.example.womensaftyapp.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -45,14 +54,16 @@ public class LocationMonitoringService extends Service implements
     String lat1, lon1, type;
 
     long oldTime = 0;
-    private Timer timer, timer1;
-    private TimerTask timerTask, timerTask1;
+    private Timer apiTimer, timer1;
+    Boolean b=false;
+    FirebaseFirestore db;
+    private TimerTask apiTask, timerTask1;
     String driver_Id, oldlat = null, oldlon = null;
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
 
     @Override
     public void onCreate() {
-
+        db = FirebaseFirestore.getInstance();
         mLocationClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -76,7 +87,6 @@ public class LocationMonitoringService extends Service implements
     public int onStartCommand(Intent intent, int flags, int startId) {
         mLocationClient.connect();
 
-        startTimer();
         startTimer1();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel();
@@ -149,6 +159,7 @@ public class LocationMonitoringService extends Service implements
     private void sendMessageToUI(String lat, String lng) {
         lat1 = lat;
         lon1 = lng;
+
         Log.d(TAG, "Sending info...");
       //  Toast.makeText(this, lat + lng + "", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(ACTION_LOCATION_BROADCAST);
@@ -159,26 +170,6 @@ public class LocationMonitoringService extends Service implements
 
     }
 
-    public void startTimer() {
-        //set a new Timer
-        timer = new Timer();
-
-        //initialize the TimerTask's job
-        initializeTimerTask();
-
-        //schedule the timer, to wake up every 1 second
-        timer.schedule(timerTask, 60000, 60000); //
-    }
-
-    public void initializeTimerTask() {
-        timerTask = new TimerTask() {
-            public void run() {
-                Log.i("in timer", "in timer ++++  " + lat1 + lon1);
-
-//                   Toast.makeText(LocationMonitoringService.this,lat1+""+lon1, Toast.LENGTH_SHORT).show();
-            }
-        };
-    }
 
     public void startTimer1() {
         //set a new Timer
@@ -197,48 +188,86 @@ public class LocationMonitoringService extends Service implements
             public void run() {
 
                 Log.i("bgloc", "in timer ++++  " + lat1 + lon1);
+                SharedPreferences jorney=getSharedPreferences("help", Context.MODE_PRIVATE);
+                if (jorney.getString("status", "").equals("1")) {
+                    if(b==false) {
+                        startApiTimer();
+                        b=true;
+                    }
+                } else {
+                    Log.d("bgloc", "Location sharing stopped");
 
-//                    Log.d("bgloc in update", oldlat + "" + oldlon);
-//                    float[] results = new float[1];
-//                    Location.distanceBetween(Double.parseDouble(oldlat), Double.parseDouble(oldlon),
-//                            Double.parseDouble(lat1), Double.parseDouble(lon1),
-//                            results);
-
-
-
-
-
-//                        SharedPreferences sp = getSharedPreferences("logindata", Context.MODE_PRIVATE);
-//                        if (sp.getString("utype", "").equals("Rider")) {
-//                            type = "Rider";
-//                            Log.d("bgloc in distance", oldlat + "" + oldlon);
-//                         //   driverUpdation();
-//
-//                            oldlat = lat1;
-//                            oldlon = lon1;
-//                        } else {
-//                            Log.d("bgloc", "id not given");
-//                        }
-//
-//                    if (sp.getString("utype", "").equals("User")) {
-//                            type = "User";
-//                            Log.d("bgloc in distance", oldlat + "" + oldlon);
-//                            driverUpdation();
-//
-//                            oldlat = lat1;
-//                            oldlon = lon1;
-//                        } else {
-//                            Log.d("bgloc", "id not given");
-//                        }
-
-
-
-
+                }
 
             }
         };
     }
+    public void startApiTimer() {
+        //set a new Timer
+        apiTimer = new Timer();
+        //initialize the TimerTask's job
+        showDialogue();
+        //Date currentTime = Calendar.getInstance().getTime();
+        //schedule the timer, to wake up every 60 seconds
+        apiTimer.schedule(apiTask, 60000, 60000); //
+    }
+    private void showDialogue() {
+        apiTask = new TimerTask() {
+            public void run() {
+                b=false;
+                Log.d("bgloc", "Api called ");
+                // Toast.makeText(LocationMonitoringService.this, "counter called", Toast.LENGTH_SHORT).show();
+                driverUpdation();
+//
+            }
+        };
 
+//
+    }
+    private void driverUpdation() {
+        SharedPreferences sp = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
+
+        db = FirebaseFirestore.getInstance();
+        db.collection("Reportedissues").whereEqualTo("uid",sp.getString("uId",""))
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if(queryDocumentSnapshots.getDocuments().size()>0) {
+                            int i;
+                            for (i = 0; i < queryDocumentSnapshots.getDocuments().size(); i++) {
+                                db.collection("Reportedissues").document( queryDocumentSnapshots.getDocuments().get(i).getId()).
+                                        update("liveLatitude",lat1,"liveLongitude",lon1)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+
+                                                Toast.makeText(LocationMonitoringService.this, "victim location updated", Toast.LENGTH_SHORT).show();
+
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.d("bgloc", "onFailure: ");
+                                                Toast.makeText(LocationMonitoringService.this, e+"updation failed", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            }
+                        }else{
+                            //Toast.makeText(getApplicationContext(), "No issues Available", Toast.LENGTH_SHORT).show();
+
+                        }
+
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+    }
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d(TAG, "Failed to connect to Google API");
@@ -247,9 +276,9 @@ public class LocationMonitoringService extends Service implements
 
     public void stoptimertask() {
         //stop the timer, if it's not already null
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
+        if (timer1 != null) {
+            timer1.cancel();
+            timer1 = null;
         }
     }
 

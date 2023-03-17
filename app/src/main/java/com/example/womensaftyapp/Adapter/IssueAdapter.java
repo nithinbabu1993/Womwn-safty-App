@@ -87,6 +87,10 @@ public class IssueAdapter extends RecyclerView.Adapter<IssueAdapter.MyviewHolder
                 alertbox.setNeutralButton("Delete Issue", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        SharedPreferences jorney = view.getRootView().getContext().getSharedPreferences("help", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor ed = jorney.edit();
+                        ed.putString("status", "0");
+                        ed.commit();
                         deleteDepartment(dm.getRid(),view, holder.getAdapterPosition());
                         dialog.dismiss();
                     }

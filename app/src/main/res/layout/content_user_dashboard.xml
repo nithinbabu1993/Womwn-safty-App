@@ -27,7 +27,7 @@
         app:layout_constraintTop_toTopOf="parent" />
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="90dp"
         android:id="@+id/clat"
         android:textColor="@color/white"
         android:textStyle="bold"
