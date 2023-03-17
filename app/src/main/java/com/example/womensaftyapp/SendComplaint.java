@@ -51,7 +51,7 @@ public class SendComplaint extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(binding.etcomplaint.getText().toString().isEmpty()){
-                    binding.etcomplaint.setError("Enter error");
+                    binding.etcomplaint.setError("Enter your complaint");
                 }else{
                     sendComplaint();
                 }

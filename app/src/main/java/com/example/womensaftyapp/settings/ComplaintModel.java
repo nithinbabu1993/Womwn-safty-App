@@ -1,6 +1,7 @@
 package com.example.womensaftyapp.settings;
 
 public class ComplaintModel {
+    public static String latitude = null, longitude = null;
     String uname,uphone,complaint,stationId,complaintDate,stationName,stationPhone,uid;
 
     public String getUname() {

@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.womensaftyapp.databinding.ActivityLoginBinding;
+import com.example.womensaftyapp.settings.Validation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -28,7 +29,17 @@ public class SignUpActivity extends AppCompatActivity {
         binding.btnProceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callRegisterFun();
+                if(binding.uname.getText().toString().isEmpty()){
+                    binding.uname.setError("Enter your name");
+                }
+                else if(binding.uphone.getText().toString().isEmpty()|| !binding.uphone.getText().toString().matches(Validation.mobile)){
+                    binding.uphone.setError("Enter a valid phone number");
+                }
+                else if(binding.lpin.getText().toString().isEmpty()){
+                    binding.lpin.setError("Enter a valid 4 digit pin number");
+                }else {
+                    callRegisterFun();
+                }
             }
         });
     }

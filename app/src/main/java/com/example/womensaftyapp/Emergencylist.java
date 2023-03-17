@@ -16,6 +16,7 @@ import com.example.womensaftyapp.Adapter.ParentAdapter;
 import com.example.womensaftyapp.Dashboard.UserDashboard;
 import com.example.womensaftyapp.databinding.ActivityEmergencylistBinding;
 import com.example.womensaftyapp.settings.Parentmodel;
+import com.example.womensaftyapp.settings.Validation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -52,7 +53,8 @@ public class Emergencylist extends AppCompatActivity {
             public void onClick(View v) {
                 if (binding.tvname.getText().toString().isEmpty()) {
                     binding.tvname.setError("Enter  Name");
-                } else if (binding.tvphone.getText().toString().isEmpty()) {
+                } else if (binding.tvphone.getText().toString().isEmpty()
+                || !binding.tvphone.getText().toString().matches(Validation.mobile)) {
                     binding.tvphone.setError("Enter  phone number");
                 }else if (binding.tvlogpin.getText().toString().isEmpty()) {
                     binding.tvlogpin.setError("Enter  Login pin");

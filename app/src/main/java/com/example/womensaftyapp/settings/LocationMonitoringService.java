@@ -159,7 +159,8 @@ public class LocationMonitoringService extends Service implements
     private void sendMessageToUI(String lat, String lng) {
         lat1 = lat;
         lon1 = lng;
-
+        ComplaintModel.latitude=lat;
+        ComplaintModel.longitude=lng;
         Log.d(TAG, "Sending info...");
       //  Toast.makeText(this, lat + lng + "", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(ACTION_LOCATION_BROADCAST);

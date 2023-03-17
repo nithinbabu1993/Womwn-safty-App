@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.womensaftyapp.AdminHome;
 import com.example.womensaftyapp.AppUsers;
+import com.example.womensaftyapp.Dashboard.LiveTracking;
 import com.example.womensaftyapp.Dashboard.SOSReports;
 import com.example.womensaftyapp.Emergencylist;
 import com.example.womensaftyapp.Parent.ParentHome;
@@ -80,7 +82,12 @@ public class IssueAdapter extends RecyclerView.Adapter<IssueAdapter.MyviewHolder
                 alertbox.setNegativeButton("Live Tracking", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        Intent i = new Intent(view.getRootView().getContext(), LiveTracking.class);
+                        Bundle b=new Bundle();
+                        b.putString("bid",dm.getRid());
+                        i.putExtras(b);
+                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        view.getRootView().getContext().startActivity(i);
                         dialog.dismiss();
                     }
                 });

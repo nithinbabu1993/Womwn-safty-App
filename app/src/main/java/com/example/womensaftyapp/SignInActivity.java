@@ -29,6 +29,7 @@ import com.example.womensaftyapp.Dashboard.UserDashboard;
 import com.example.womensaftyapp.Parent.ParentHome;
 import com.example.womensaftyapp.Police.PoliceHome;
 import com.example.womensaftyapp.databinding.ActivitySignInBinding;
+import com.example.womensaftyapp.settings.Validation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
@@ -89,7 +90,11 @@ public class SignInActivity extends AppCompatActivity {
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callLoginFun();
+                if(binding.loginpin.getText().toString().isEmpty()){
+                    binding.loginpin.setError("Enter a valid 4 digit pin number");
+                }else {
+                    callLoginFun();
+                }
             }
         });
         binding.forgotpin.setOnClickListener(new View.OnClickListener() {

@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.womensaftyapp.databinding.ActivityAddPoliceBinding;
+import com.example.womensaftyapp.settings.Validation;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -62,8 +63,9 @@ public class AddPolice extends FragmentActivity implements OnMapReadyCallback {
                 else if(binding.hlon.getText().toString().isEmpty()){
                     binding.hlon.setError("Enter station longitude");
                 }
-                else if(binding.hphone.getText().toString().isEmpty()){
-                    binding.hphone.setError("Enter station phone");
+                else if(binding.hphone.getText().toString().isEmpty()
+                || !binding.hphone.getText().toString().matches(Validation.mobile)){
+                    binding.hphone.setError("Enter station valid phone");
                 }
                 else if(binding.hpin.getText().toString().isEmpty()||binding.hpin.getText().toString().length()<4){
                     binding.hpin.setError("Enter 4 digit  login pin");
