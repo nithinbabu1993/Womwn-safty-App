@@ -92,7 +92,7 @@ public class LiveTracking extends FragmentActivity implements OnMapReadyCallback
                                 parseDouble(documentSnapshot.getString("liveLongitude")));
                         CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(12).build();
                         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                        //  mMap.clear();
+                          mMap.clear();
                         mMap.addMarker(new MarkerOptions()
                                 .position(latLng)
                                 .title("Your Child is here")
